@@ -17,7 +17,7 @@ export default function Mission() {
             </p>
           </div>
           <div className="md:w-1/2 relative h-60 md:h-80 w-full rounded-lg overflow-hidden">
-            <img src="/placeholder.svg?height=400&width=600" alt="Our Mission" className="object-cover w-full h-full" />
+            <img src="/images/our-mission.jpg?height=400&width=600" alt="Our Mission" className="object-cover w-full h-full" />
           </div>
         </div>
       </div>

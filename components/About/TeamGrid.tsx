@@ -7,25 +7,25 @@ const teamMembers = [
   {
     name: "Jane Doe",
     role: "CEO & Founder",
-    image: "/placeholder.svg?height=200&width=200",
+    image: "/images/ceo.png?height=200&width=200",
     linkedin: "#",
   },
   {
     name: "John Smith",
     role: "Chief Technology Officer",
-    image: "/placeholder.svg?height=200&width=200",
+    image: "/images/cto.png?height=200&width=200",
     linkedin: "#",
   },
   {
     name: "Emily White",
     role: "Head of Sales",
-    image: "/placeholder.svg?height=200&width=200",
+    image: "/images/headofthesales.png?height=200&width=200",
     linkedin: "#",
   },
   {
     name: "David Green",
     role: "Marketing Director",
-    image: "/placeholder.svg?height=200&width=200",
+    image: "/images/marketing-director.png?height=200&width=200",
     linkedin: "#",
   },
 ]

@@ -6,16 +6,15 @@ import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Button } from "@/components/ui/button"
-import { db } from "@/firebase/config" // Import db from your Firebase config
-import { collection, addDoc } from "firebase/firestore"
-import { toast } from "react-hot-toast" // Assuming you have react-hot-toast installed or similar
+import { databaseUtils } from "@/lib/firebase"
+import { toast } from "react-hot-toast"
 
 export default function ContactForm() {
   const [formData, setFormData] = useState({
-    fullName: "",
-    contactNumber: "",
+    name: "",
+    phone: "",
     email: "",
-    carLookingFor: "",
+    message: "",
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -32,19 +31,21 @@ export default function ContactForm() {
     setIsSubmitting(true)
 
     try {
-      await addDoc(collection(db, "contactSubmissions"), {
+      const success = await databaseUtils.saveContactForm({
         ...formData,
-        timestamp: new Date(),
+        createdAt: new Date().toISOString(),
       })
-      toast.success("Your message has been sent successfully!")
-      setFormData({
-        fullName: "",
-        contactNumber: "",
-        email: "",
-        carLookingFor: "",
-      })
+
+      if (success) {
+        setFormData({
+          name: "",
+          phone: "",
+          email: "",
+          message: "",
+        })
+      }
     } catch (error) {
-      console.error("Error adding document: ", error)
+      console.error("Error submitting form: ", error)
       toast.error("Failed to send your message. Please try again.")
     } finally {
       setIsSubmitting(false)
@@ -66,18 +67,18 @@ export default function ContactForm() {
           <form onSubmit={handleSubmit} className="grid gap-4">
             <Input
               type="text"
-              name="fullName"
+              name="name"
               placeholder="Full Name"
-              value={formData.fullName}
+              value={formData.name}
               onChange={handleChange}
               required
               className="focus-visible:ring-yellow-500"
             />
             <Input
               type="tel"
-              name="contactNumber"
+              name="phone"
               placeholder="Contact Number"
-              value={formData.contactNumber}
+              value={formData.phone}
               onChange={handleChange}
               required
               className="focus-visible:ring-yellow-500"
@@ -92,9 +93,9 @@ export default function ContactForm() {
               className="focus-visible:ring-yellow-500"
             />
             <Textarea
-              name="carLookingFor"
+              name="message"
               placeholder="What kind of car are you looking for?"
-              value={formData.carLookingFor}
+              value={formData.message}
               onChange={handleChange}
               rows={4}
               className="focus-visible:ring-yellow-500 resize-y"

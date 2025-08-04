@@ -7,7 +7,9 @@ import { useAuth } from "@/context/AuthContext"
 import { useRouter } from "next/navigation"
 import { toast } from "react-hot-toast"
 import type React from "react"
-import { Star, Heart, Eye, ShoppingCart, TrendingUp } from "lucide-react"
+import { Star, Heart, Eye, ShoppingCart, TrendingUp, MapPin, Calendar, Zap } from "lucide-react"
+import { motion } from "framer-motion"
+import { databaseUtils } from "@/lib/firebase"
 
 interface Feature {
   name: string
@@ -23,6 +25,10 @@ interface FeatureCardProps {
   price: number
   discount?: number
   mainFeatures: Feature[]
+  category?: string
+  location?: string
+  year?: number
+  mileage?: string
 }
 
 export default function FeatureCard({
@@ -34,24 +40,78 @@ export default function FeatureCard({
   price,
   discount,
   mainFeatures,
+  category = "Sedan",
+  location = "Mumbai",
+  year = 2023,
+  mileage = "15,000 km",
 }: FeatureCardProps) {
   const discountedPrice = discount ? price - discount : price
   const { user } = useAuth()
   const router = useRouter()
 
-  const handleBuyNow = () => {
+  const handleBuyNow = async () => {
     if (!user) {
       toast.error("Please sign in to buy a car.")
       router.push("/auth/signin")
     } else {
+      // Track interaction
+      await databaseUtils.saveFeatureInteraction({
+        userId: user.uid,
+        featureId: id,
+        action: 'contact',
+        timestamp: new Date().toISOString(),
+      })
+      
       toast.success(`You clicked Buy Now for ${name}! (Placeholder action)`)
       // Implement actual buying logic here
     }
   }
 
+  const handleViewDetails = async () => {
+    // Track view interaction
+    if (user) {
+      await databaseUtils.saveFeatureInteraction({
+        userId: user.uid,
+        featureId: id,
+        action: 'view',
+        timestamp: new Date().toISOString(),
+      })
+    }
+    
+    toast.success(`Viewing details for ${name}`)
+    // Navigate to detailed view
+  }
+
+  const handleLike = async () => {
+    if (!user) {
+      toast.error("Please sign in to like cars.")
+      router.push("/auth/signin")
+      return
+    }
+
+    // Track like interaction
+    await databaseUtils.saveFeatureInteraction({
+      userId: user.uid,
+      featureId: id,
+      action: 'like',
+      timestamp: new Date().toISOString(),
+    })
+    
+    toast.success(`Added ${name} to favorites!`)
+  }
+
   return (
-    <div className="group animate-fade-in">
-      <Card className="w-full max-w-sm rounded-2xl overflow-hidden shadow-soft hover:shadow-large transition-all duration-500 bg-gradient-card border-0 group-hover:border-theme-primary-200/50">
+    <motion.div 
+      className="group animate-fade-in"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      whileHover={{ y: -5 }}
+    >
+      <Card className="w-full max-w-sm rounded-2xl overflow-hidden shadow-soft hover:shadow-large transition-all duration-500 bg-gradient-card border-0 group-hover:border-theme-primary-200/50 relative">
+        {/* Gradient Border Effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-yellow-400 via-orange-500 to-red-500 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 -z-10" />
+        
         <div className="relative w-full h-48 overflow-hidden">
           <Image
             src={imageSrc || "/placeholder.svg"}
@@ -62,29 +122,57 @@ export default function FeatureCard({
           />
           
           {/* Gradient Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           
           {/* Badges */}
           <div className="absolute top-3 left-3 flex flex-col gap-2">
             {discount && (
-              <div className="bg-gradient-secondary text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg">
+              <motion.div 
+                className="bg-gradient-to-r from-red-500 to-pink-500 text-white px-3 py-1 rounded-full text-xs font-semibold shadow-lg"
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2 }}
+              >
                 Save ₹{discount.toLocaleString("en-IN")}
-              </div>
+              </motion.div>
             )}
-            <div className="bg-theme-primary-500/90 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium">
+            <motion.div 
+              className="bg-gradient-to-r from-yellow-500 to-orange-500/90 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.3 }}
+            >
               <TrendingUp className="h-3 w-3 inline mr-1" />
               Hot Deal
-            </div>
+            </motion.div>
+            <motion.div 
+              className="bg-blue-500/90 backdrop-blur-sm text-white px-2 py-1 rounded-full text-xs font-medium"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.4 }}
+            >
+              {category}
+            </motion.div>
           </div>
           
           {/* Action Buttons */}
           <div className="absolute top-3 right-3 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-all duration-300">
-            <button className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-theme-accent-700 hover:text-theme-primary-600 hover:bg-white transition-all duration-200">
+            <motion.button 
+              className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-theme-accent-700 hover:text-red-500 hover:bg-white transition-all duration-200"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={handleLike}
+            >
               <Heart className="h-4 w-4" />
-            </button>
-            <button className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-theme-accent-700 hover:text-theme-primary-600 hover:bg-white transition-all duration-200">
+            </motion.button>
+            <motion.button 
+              className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-theme-accent-700 hover:text-blue-500 hover:bg-white transition-all duration-200"
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={handleViewDetails}
+            >
               <Eye className="h-4 w-4" />
-            </button>
+            </motion.button>
           </div>
         </div>
         
@@ -98,6 +186,22 @@ export default function FeatureCard({
         </CardHeader>
         
         <CardContent className="flex flex-col gap-4 pb-4">
+          {/* Car Details */}
+          <div className="flex items-center justify-between text-xs text-gray-500">
+            <div className="flex items-center gap-1">
+              <MapPin className="h-3 w-3" />
+              <span>{location}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Calendar className="h-3 w-3" />
+              <span>{year}</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <Zap className="h-3 w-3" />
+              <span>{mileage}</span>
+            </div>
+          </div>
+          
           {/* Price Section */}
           <div className="flex items-baseline gap-2">
             <span className="text-2xl font-display font-bold gradient-text-primary">
@@ -112,13 +216,19 @@ export default function FeatureCard({
           
           {/* Features List */}
           <div className="space-y-2">
-            {mainFeatures.map((feature, index) => (
-              <div key={index} className="flex items-center gap-2 text-sm text-theme-accent-700">
+            {mainFeatures.slice(0, 3).map((feature, index) => (
+              <motion.div 
+                key={index} 
+                className="flex items-center gap-2 text-sm text-theme-accent-700"
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.1 * index }}
+              >
                 {feature.icon && (
                   <feature.icon className="h-4 w-4 text-theme-primary-500 flex-shrink-0" />
                 )}
                 <span>{feature.name}</span>
-              </div>
+              </motion.div>
             ))}
           </div>
           
@@ -131,16 +241,24 @@ export default function FeatureCard({
           </div>
         </CardContent>
         
-        <CardFooter className="pt-0">
+        <CardFooter className="pt-0 flex gap-2">
+          <Button 
+            onClick={handleViewDetails} 
+            variant="outline"
+            className="flex-1 bg-transparent border-yellow-500 text-yellow-500 hover:bg-yellow-500 hover:text-white font-semibold py-3 rounded-xl transition-all duration-300"
+          >
+            <Eye className="h-4 w-4 mr-2" />
+            Learn More
+          </Button>
           <Button 
             onClick={handleBuyNow} 
-            className="w-full bg-gradient-primary hover:bg-gradient-primary text-white font-semibold py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group-hover:shadow-glow"
+            className="flex-1 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600 text-white font-semibold py-3 rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-xl group-hover:shadow-glow"
           >
             <ShoppingCart className="h-4 w-4 mr-2" />
             Buy Now
           </Button>
         </CardFooter>
       </Card>
-    </div>
+    </motion.div>
   )
 }
