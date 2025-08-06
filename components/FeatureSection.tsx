@@ -656,7 +656,7 @@ export default function FeatureSection() {
         {/* CTA Section */}
         <div className="flex justify-center mt-16 animate-fade-in-up">
           <Link href="/contact">
-            <Button className="bg-gradient-secondary hover:bg-gradient-secondary text-white text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+            <Button className="bg-secondary text-amber-500 text-lg px-8 py-6 rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
               Contact Us for More Options
             </Button>
           </Link>

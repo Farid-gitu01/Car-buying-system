@@ -20,34 +20,34 @@ const aboutSlides: AboutSlide[] = [
     description:
       "To revolutionize the car selling and buying experience by providing a transparent, efficient, and trustworthy platform for everyone.",
     icon: TrendingUp,
-    image: "/images/our-mission.jpg?height=400&width=600",
+    image: "/images/our-mission.png?height=400&width=600",
   },
   {
     title: "Our Vision",
     description:
       "To be the leading online marketplace for vehicles, empowering individuals to achieve the best value and experience in every transaction.",
     icon: CheckCircle,
-    image: "/images/our-vision.jpg?height=400&width=600",
+    image: "/images/our-vision.png?height=400&width=600",
   },
   {
     title: "Why Trust YeloCar?",
     description:
       "We prioritize security, transparency, and user satisfaction. Our verified listings and secure payment gateways ensure peace of mind.",
     icon: Shield,
-    image: "/images/trust-platform.jpg?height=400&width=600",
+    image: "/images/trust-platform.png?height=400&width=600",
   },
   {
     title: "Ease of Selling",
     description:
       "List your car in minutes with our intuitive interface. Reach a wide audience and get the best value for your vehicle.",
     icon: TrendingUp,
-    image: "/images/ease-selling-car.jpg?height=400&width=600",
+    image: "/images/ease-selling-car.png?height=400&width=600",
   },
   {
     title: "Seamless Experience",
     description: "From listing to sale, our platform guides you every step of the way, making car selling a breeze.",
     icon: CheckCircle,
-    image: "/images/seamless-experience.jpg?height=400&width=600",
+    image: "/images/seamless-experience.png?height=400&width=600",
   },
 ]
 

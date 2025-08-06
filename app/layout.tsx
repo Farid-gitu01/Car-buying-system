@@ -4,7 +4,7 @@ import { Inter } from "next/font/google"
 import "./globals.css"
 import Navbar from "@/components/Navbar"
 import Footer from "@/components/Footer"
-import ConnectivityStatus from "@/components/ConnectivityStatus"
+// import ConnectivityStatus from "@/components/ConnectivityStatus"
 import { Toaster } from "react-hot-toast" // For toast notifications
 import AuthProvider from "@/context/AuthContext" // Import AuthProvider
 
@@ -27,7 +27,7 @@ export default function RootLayout({
         <AuthProvider>
           {" "}
           {/* Wrap children with AuthProvider */}
-          <ConnectivityStatus />
+          {/* <ConnectivityStatus /> */}
           <Navbar />
           <main className="flex-1">{children}</main>
           <Footer />
